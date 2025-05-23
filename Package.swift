@@ -10,17 +10,20 @@ let package = Package(
     products: [
         .library(
             name: "MyNeuralFramework",
-            targets: ["MyNeuralFrameworkWrapper"]
+            targets: ["MyNeuralFramework"]
         )
     ],
     dependencies: [
+        // Updated SQLCipher dependency (official version)
         .package(
-            url: "https://github.com/stoneburner/sqlcipher.git",
+            url: "https://github.com/stoneburner/SQLCipher.git",
             from: "4.5.0"
         ),
+        
+        // Razorpay dependency (using their official Swift Package)
         .package(
             url: "https://github.com/razorpay/razorpay-pod.git",
-            from: "1.0.0"
+            from: "1.3.0"  // Updated to a more recent version
         )
     ],
     targets: [
@@ -29,14 +32,19 @@ let package = Package(
             url: "https://github.com/monish-instinct/Binary/releases/download/binary/MyNeuralFramework.xcframework.zip",
             checksum: "e6fd122c3d086f262f677732fd0eb61614ae06723483bdd7d5046fee8248fbf0"
         ),
+        
         .target(
-            name: "MyNeuralFrameworkWrapper",
+            name: "MyNeuralFramework",
             dependencies: [
-                "MyNeuralFramework",
                 .product(name: "SQLCipher", package: "sqlcipher"),
                 .product(name: "razorpay-pod", package: "razorpay-pod")
             ],
-            path: "Sources/MyNeuralFrameworkWrapper"
+            path: "Sources",
+            exclude: ["Info.plist"],
+            linkerSettings: [
+                .linkedLibrary("sqlite3"),
+                .linkedLibrary("z")
+            ]
         )
     ]
 )
